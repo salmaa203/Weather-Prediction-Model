@@ -381,8 +381,3 @@ can:
 **Salma Elshehy**\
 Computer & Systems Engineering\
 Alexandria University
-
-## Weather Forecast App
-
-[![Launch Weather Forecast
-App](https://img.shields.io/badge/🚀%20LAUNCH%20APP-Click%20Here-2563EB?style=for-the-badge)](https://weather-prediction-model-f53pmfmwgrsuyr8eamdjzp.streamlit.app/)
