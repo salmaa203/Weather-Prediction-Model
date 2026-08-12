@@ -7,12 +7,12 @@ The project covers time-series preprocessing, exploratory data analysis,
 stationarity testing, ARIMA/SARIMA forecasting, XGBoost forecasting,
 model evaluation, and deployment with Streamlit.
 
-## 🚀 Live Demo
+## Live Demo
 
 [![Open Live
 App](https://img.shields.io/badge/Open%20Live%20App-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://weather-prediction-model-f53pmfmwgrsuyr8eamdjzp.streamlit.app/)
 
-## 📌 Project Overview
+## Project Overview
 
 Weather forecasting is a time-series problem because temperature changes
 over time and contains trend, seasonality, autocorrelation, and
@@ -44,7 +44,7 @@ application.
 > RNN/LSTM is an optional bonus extension in the original Task 5
 > specification.
 
-## 🗂️ Project Structure
+## Project Structure
 
 ``` text
 weather-prediction-model/
@@ -61,7 +61,7 @@ weather-prediction-model/
 └── README.md
 ```
 
-## 📊 Dataset
+## Dataset
 
 The cleaned dataset contains a date/time index and weather variables
 such as:
@@ -75,7 +75,7 @@ such as:
 The data is sorted chronologically and aligned to a fixed frequency
 before modeling.
 
-## 🔧 Time-Series Preprocessing
+## Time-Series Preprocessing
 
 ### Datetime Index & Frequency
 
@@ -117,7 +117,7 @@ Weather observations are inspected using:
 The objective is to preserve valid weather events and maintain a
 continuous series.
 
-## 📈 Exploratory Data Analysis
+## Exploratory Data Analysis
 
 The EDA stage examines:
 
@@ -130,7 +130,7 @@ The EDA stage examines:
 -   Correlations between temperature, humidity, wind, precipitation, and
     pressure when available
 
-## 📉 Stationarity
+## Stationarity
 
 ARIMA/SARIMA requires the target series to become stationary after
 differencing.
@@ -148,7 +148,7 @@ differencing.
 Both tests are useful because they approach stationarity from different
 null hypotheses.
 
-## 🔄 Differencing
+## Differencing
 
 If required, first-order and seasonal differencing can be investigated:
 
@@ -160,7 +160,7 @@ df["temp_diff_seasonal"] = df["temperature"].diff(24)
 For hourly data, `24` represents daily seasonality. The appropriate
 seasonal period should match the actual data frequency.
 
-## 📊 ACF & PACF
+## ACF & PACF
 
 ACF and PACF plots help propose:
 
@@ -172,7 +172,7 @@ ACF and PACF plots help propose:
 The manually selected orders should be compared with automated model
 selection.
 
-## 🤖 SARIMA
+## SARIMA
 
 The main statistical forecasting approach is SARIMA:
 
@@ -199,7 +199,7 @@ fit = model.fit(disp=False)
 The final order should be justified using stationarity tests, ACF/PACF,
 automated search, and residual diagnostics.
 
-## 🔎 Auto ARIMA
+## Auto ARIMA
 
 ``` python
 import pmdarima as pm
@@ -218,7 +218,7 @@ auto_model = pm.auto_arima(
 The auto-selected model is compared with the manually proposed SARIMA
 configuration.
 
-## 🩺 Residual Diagnostics
+## Residual Diagnostics
 
 Residuals should ideally:
 
@@ -235,7 +235,7 @@ fit.plot_diagnostics(figsize=(10, 8))
 
 and the Ljung-Box test.
 
-## 📈 Confidence Intervals
+## Confidence Intervals
 
 SARIMA produces both forecasts and uncertainty intervals:
 
@@ -250,7 +250,7 @@ confidence_interval = forecast.conf_int(alpha=0.05)
 The application can display the forecast together with the 95%
 confidence interval.
 
-## 🌲 XGBoost Forecasting
+## XGBoost Forecasting
 
 XGBoost is included as a machine-learning comparison.
 
@@ -293,7 +293,7 @@ precipitation
 These features allow XGBoost to learn nonlinear relationships between
 recent weather conditions and temperature.
 
-## 🔁 Recursive Future Forecasting
+## Recursive Future Forecasting
 
 For future dates, actual temperature is unknown. Therefore, multi-step
 XGBoost forecasting should be performed recursively:
@@ -308,7 +308,7 @@ Future external variables such as humidity and wind speed should ideally
 come from a real weather forecast/API. If they are simulated, this
 assumption should be clearly documented.
 
-## 🧪 Evaluation
+## Evaluation
 
 Models are evaluated on a chronological held-out test set.
 
@@ -342,7 +342,7 @@ mape = np.mean(
 ) * 100
 ```
 
-## ⏱️ Time-Aware Validation
+## Time-Aware Validation
 
 Random shuffling must be avoided for time-series evaluation.
 
@@ -360,7 +360,7 @@ tscv = TimeSeriesSplit(
 This better represents how the model will behave when forecasting
 genuinely unseen future observations.
 
-## 📌 Model Comparison
+## Model Comparison
 
   Model       MAE   RMSE   MAPE Role
   --------- ----- ------ ------ ------------------------
@@ -373,7 +373,7 @@ genuinely unseen future observations.
 The best model should be selected using held-out, time-aware metrics
 rather than visual smoothness alone.
 
-## 🌐 Streamlit Application
+## Streamlit Application
 
 The deployed application provides an interactive interface where users
 can:
@@ -383,7 +383,7 @@ can:
 3.  View the predicted temperatures.
 4.  Visualize the future temperature trend.
 
-## 🛠️ Technologies
+## Technologies
 
 -   Python
 -   Pandas
@@ -393,58 +393,10 @@ can:
 -   Scikit-learn
 -   Statsmodels
 -   pmdarima
--   XGBoost
 -   Joblib
 -   Streamlit
 
-Optional bonus:
-
--   TensorFlow / Keras
--   RNN
--   LSTM
-
-## 📦 Installation
-
-``` bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd weather-prediction-model
-
-python -m venv venv
-venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
-## ▶️ Run Locally
-
-``` bash
-streamlit run weather_project/streamlit_app.py
-```
-
-## 📋 Task 5 Deliverables
-
-  Requirement                    Status
-  ------------------------------ -------------------
-  Cleaned time series            ✅
-  Resampling / fixed frequency   ✅
-  Missing-value handling         ✅
-  Outlier investigation          ✅
-  Feature engineering            ✅
-  ADF + KPSS                     ✅
-  Differencing analysis          ✅
-  ACF/PACF                       ✅
-  Auto ARIMA                     ✅
-  SARIMA                         ✅
-  Residual diagnostics           ✅
-  Ljung-Box test                 ✅
-  Confidence intervals           ✅
-  MAE / RMSE / MAPE              ✅
-  Time-aware validation          ✅
-  XGBoost comparison             ✅
-  Streamlit deployment           ✅
-  RNN/LSTM                       ⭐ Optional bonus
-
-## 💡 Key Takeaways
+## Key Takeaways
 
 -   SARIMA is designed specifically to model autocorrelation and
     seasonality in time series.
@@ -458,13 +410,13 @@ streamlit run weather_project/streamlit_app.py
 -   Final model selection should be based on time-aware evaluation
     metrics.
 
-## 👩‍💻 Author
+## Author
 
 **Salma Elshehy**\
 Computer & Systems Engineering\
 Alexandria University
 
-## 🌤️ Weather Forecast App
+## Weather Forecast App
 
 [![Launch Weather Forecast
 App](https://img.shields.io/badge/🚀%20LAUNCH%20APP-Click%20Here-2563EB?style=for-the-badge)](https://weather-prediction-model-f53pmfmwgrsuyr8eamdjzp.streamlit.app/)
