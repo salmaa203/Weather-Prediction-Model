@@ -1,4 +1,5 @@
 streamlit
+plotly
 joblib
 numpy
 pandas
