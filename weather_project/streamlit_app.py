@@ -20,7 +20,7 @@ st.set_page_config(
 # Paths
 # =========================================================
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 MODEL_PATH = (
     BASE_DIR
@@ -29,7 +29,6 @@ MODEL_PATH = (
 )
 
 DATA_PATH = BASE_DIR / "weather_cleaned.csv"
-
 
 # =========================================================
 # Load Model
