@@ -24,7 +24,7 @@ trains forecasting models, evaluates them using time-aware validation,
 and exposes the final model through an interactive Streamlit
 application.
 
-## 🎯 Objectives
+## Objectives
 
 -   Prepare raw weather data for time-series forecasting.
 -   Resample the data to a fixed frequency.
