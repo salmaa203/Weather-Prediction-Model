@@ -38,7 +38,6 @@ st.markdown(
         );
     }
 
-    /* Remove Streamlit default top padding */
     .block-container {
         padding-top: 2rem;
         padding-bottom: 3rem;
@@ -208,6 +207,9 @@ st.markdown(
 # Paths
 # =========================================================
 
+# streamlit_app.py موجود داخل weather_project/
+# لذلك نرجع فولدر واحد للوصول إلى project root
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MODEL_PATH = (
@@ -225,7 +227,6 @@ DATA_PATH = BASE_DIR / "weather_cleaned.csv"
 
 @st.cache_resource
 def load_model():
-
     return joblib.load(MODEL_PATH)
 
 
@@ -307,6 +308,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 st.markdown(
     """
     <div class="input-label">
@@ -346,6 +348,7 @@ generate = st.button(
     "Generate Forecast"
 )
 
+
 st.markdown(
     "</div>",
     unsafe_allow_html=True
@@ -365,11 +368,11 @@ if generate:
         # -------------------------------------------------
 
         future_index = pd.date_range(
-            start=df.index.max()
-            + pd.Timedelta(days=1),
-
+            start=(
+                df.index.max()
+                + pd.Timedelta(days=1)
+            ),
             periods=int(forecast_days),
-
             freq="D"
         )
 
@@ -400,8 +403,7 @@ if generate:
         # -------------------------------------------------
 
         future_pred = (
-            future_forecast
-            .predicted_mean
+            future_forecast.predicted_mean
         )
 
 
@@ -410,8 +412,7 @@ if generate:
         # -------------------------------------------------
 
         future_ci = (
-            future_forecast
-            .conf_int()
+            future_forecast.conf_int()
         )
 
 
@@ -423,16 +424,21 @@ if generate:
 
             "Date": future_index,
 
-            "Forecast Temperature": future_pred.values,
+            "Forecast Temperature":
+                future_pred.values,
 
-            "Lower 95% CI": future_ci.iloc[:, 0].values,
+            "Lower 95% CI":
+                future_ci.iloc[:, 0].values,
 
-            "Upper 95% CI": future_ci.iloc[:, 1].values
+            "Upper 95% CI":
+                future_ci.iloc[:, 1].values
 
         })
 
 
+        # -------------------------------------------------
         # Round values
+        # -------------------------------------------------
 
         forecast_df[
             "Forecast Temperature"
@@ -455,7 +461,9 @@ if generate:
         ].round(2)
 
 
+        # -------------------------------------------------
         # Format Date
+        # -------------------------------------------------
 
         forecast_df["Date"] = (
             forecast_df["Date"]
@@ -472,7 +480,7 @@ if generate:
             <div class="custom-card">
 
                 <div class="section-title">
-                    📊 30-Day Temperature Forecast
+                    📊 Temperature Forecast
                 </div>
 
                 <div class="section-subtitle">
@@ -490,25 +498,32 @@ if generate:
 
         display_df = forecast_df.copy()
 
+
         display_df[
             "Forecast Temperature"
         ] = display_df[
             "Forecast Temperature"
-        ].map(lambda x: f"{x:.2f} °C")
+        ].map(
+            lambda x: f"{x:.2f} °C"
+        )
 
 
         display_df[
             "Lower 95% CI"
         ] = display_df[
             "Lower 95% CI"
-        ].map(lambda x: f"{x:.2f} °C")
+        ].map(
+            lambda x: f"{x:.2f} °C"
+        )
 
 
         display_df[
             "Upper 95% CI"
         ] = display_df[
             "Upper 95% CI"
-        ].map(lambda x: f"{x:.2f} °C")
+        ].map(
+            lambda x: f"{x:.2f} °C"
+        )
 
 
         st.dataframe(
@@ -558,15 +573,21 @@ if generate:
 
         chart.add_trace(
             go.Scatter(
+
                 x=forecast_df["Date"],
+
                 y=forecast_df["Lower 95% CI"],
+
                 mode="lines",
+
                 name="Lower 95% CI",
+
                 line=dict(
                     color="rgba(100,116,139,0.5)",
                     dash="dash",
                     width=1
                 )
+
             )
         )
 
@@ -577,10 +598,15 @@ if generate:
 
         chart.add_trace(
             go.Scatter(
+
                 x=forecast_df["Date"],
+
                 y=forecast_df["Upper 95% CI"],
+
                 mode="lines",
+
                 name="Upper 95% CI",
+
                 line=dict(
                     color="rgba(100,116,139,0.5)",
                     dash="dash",
@@ -590,6 +616,7 @@ if generate:
                 fill="tonexty",
 
                 fillcolor="rgba(37,99,235,0.12)"
+
             )
         )
 
@@ -600,9 +627,13 @@ if generate:
 
         chart.add_trace(
             go.Scatter(
+
                 x=forecast_df["Date"],
+
                 y=forecast_df["Forecast Temperature"],
+
                 mode="lines+markers",
+
                 name="Forecast Temperature",
 
                 line=dict(
@@ -614,6 +645,7 @@ if generate:
                     color="#2563eb",
                     size=7
                 )
+
             )
         )
 
