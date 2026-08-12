@@ -339,19 +339,6 @@ tscv = TimeSeriesSplit(
 This better represents how the model will behave when forecasting
 genuinely unseen future observations.
 
-## Model Comparison
-
-  Model       MAE   RMSE   MAPE Role
-  --------- ----- ------ ------ ------------------------
-  ARIMA       ---    ---    --- Non-seasonal baseline
-  SARIMA      ---    ---    --- Main statistical model
-  XGBoost     ---    ---    --- ML comparison
-  RNN         ---    ---    --- Optional bonus
-  LSTM        ---    ---    --- Optional bonus
-
-The best model should be selected using held-out, time-aware metrics
-rather than visual smoothness alone.
-
 ## Streamlit Application
 
 The deployed application provides an interactive interface where users
