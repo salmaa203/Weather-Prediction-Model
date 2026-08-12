@@ -2,34 +2,30 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-from pathlib import Path
 import plotly.graph_objects as go
+from pathlib import Path
 
 
 # =========================================================
-# PAGE CONFIGURATION
+# Page Configuration
 # =========================================================
 
 st.set_page_config(
     page_title="Weather Forecast",
     page_icon="🌤️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
 
 # =========================================================
-# CUSTOM CSS
+# Custom CSS
 # =========================================================
 
 st.markdown(
     """
     <style>
 
-    /* ==============================
-       BACKGROUND
-    ============================== */
-
+    /* Main background */
     .stApp {
         background: linear-gradient(
             135deg,
@@ -38,43 +34,31 @@ st.markdown(
         );
     }
 
-
-    /* ==============================
-       MAIN CONTENT WIDTH
-    ============================== */
-
+    /* Remove Streamlit default top padding */
     .block-container {
-        max-width: 1400px;
-        padding-top: 35px;
-        padding-bottom: 50px;
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+        max-width: 1200px;
     }
 
-
-    /* ==============================
-       HEADER
-    ============================== */
-
+    /* Main title */
     .main-title {
         text-align: center;
-        color: #0f172a;
-        font-size: 48px;
+        font-size: 52px;
         font-weight: 800;
+        color: #0f172a;
         margin-bottom: 5px;
     }
 
     .main-subtitle {
         text-align: center;
-        color: #64748b;
         font-size: 20px;
+        color: #64748b;
         margin-bottom: 45px;
     }
 
-
-    /* ==============================
-       CARD
-    ============================== */
-
-    .card {
+    /* Cards */
+    .custom-card {
         background: white;
         padding: 30px;
         border-radius: 20px;
@@ -82,96 +66,61 @@ st.markdown(
         margin-bottom: 30px;
     }
 
-
-    /* ==============================
-       SECTION TITLE
-    ============================== */
-
+    /* Section title */
     .section-title {
         text-align: center;
-        color: #0f172a;
         font-size: 30px;
         font-weight: 700;
+        color: #0f172a;
+        margin-top: 10px;
         margin-bottom: 8px;
     }
 
     .section-subtitle {
         text-align: center;
-        color: #64748b;
         font-size: 18px;
+        color: #64748b;
         margin-bottom: 25px;
     }
 
-
-    /* ==============================
-       INPUT LABEL
-    ============================== */
-
-    .input-label {
-        color: #1e293b;
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-
-    /* ==============================
-       NUMBER INPUT
-    ============================== */
-
-    div[data-testid="stNumberInput"] {
-        margin-bottom: 5px;
-    }
-
-    div[data-testid="stNumberInput"] input {
-        border-radius: 10px;
-        font-size: 18px;
-    }
-
-
-    /* ==============================
-       BUTTON
-    ============================== */
-
-    div[data-testid="stButton"] {
+    /* Button */
+    div.stButton > button {
         width: 100%;
-    }
-
-    div[data-testid="stButton"] > button {
-        width: 100%;
-        height: 58px;
-        border-radius: 12px;
         background-color: #2563eb;
         color: white;
         border: none;
-        font-size: 19px;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 18px;
         font-weight: 700;
+        height: 55px;
     }
 
-    div[data-testid="stButton"] > button:hover {
+    div.stButton > button:hover {
         background-color: #1d4ed8;
         color: white;
     }
 
-
-    /* ==============================
-       TABLE
-    ============================== */
-
-    div[data-testid="stDataFrame"] {
-        border-radius: 12px;
-        overflow: hidden;
+    /* Input label */
+    label {
+        font-weight: 700 !important;
+        color: #0f172a !important;
     }
 
+    /* Temperature result */
+    .temperature-result {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 800;
+        color: #2563eb;
+        margin: 15px 0;
+    }
 
-    /* ==============================
-       MOBILE
-    ============================== */
-
-    @media (max-width: 600px) {
+    /* Responsive */
+    @media (max-width: 700px) {
 
         .main-title {
-            font-size: 32px;
+            font-size: 36px;
         }
 
         .main-subtitle {
@@ -180,10 +129,6 @@ st.markdown(
 
         .section-title {
             font-size: 24px;
-        }
-
-        .section-subtitle {
-            font-size: 16px;
         }
 
     }
@@ -195,77 +140,64 @@ st.markdown(
 
 
 # =========================================================
-# HEADER
-# =========================================================
-
-st.markdown(
-    """
-    <div class="main-title">
-        🌤️ Weather Forecast
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="main-subtitle">
-        Predict future temperature using a SARIMAX time-series forecasting model.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# =========================================================
-# PATHS
+# Paths
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MODEL_PATH = (
-    BASE_DIR
-    / "predictor"
-    / "final_weather_model.pkl"
-)
+MODEL_PATH = BASE_DIR / "predictor" / "final_weather_model.pkl"
 
-DATA_PATH = (
-    BASE_DIR
-    / "weather_cleaned.csv"
-)
+DATA_PATH = BASE_DIR / "weather_cleaned.csv"
 
 
 # =========================================================
-# LOAD MODEL
+# Load Model
 # =========================================================
 
 @st.cache_resource
 def load_model():
 
+    if not MODEL_PATH.exists():
+        st.error(
+            f"Model file not found: {MODEL_PATH}"
+        )
+        st.stop()
+
     return joblib.load(MODEL_PATH)
 
 
+model = load_model()
+
+
 # =========================================================
-# LOAD DATA
+# Load Weather Data
 # =========================================================
 
 @st.cache_data
 def load_data():
 
+    if not DATA_PATH.exists():
+        st.error(
+            f"Dataset not found: {DATA_PATH}"
+        )
+        st.stop()
+
     df = pd.read_csv(
         DATA_PATH,
-        parse_dates=["date"]
+        parse_dates=["date"],
+        index_col="date"
     )
-
-    df = df.set_index("date")
 
     df = df.asfreq("D")
 
     return df
 
 
+df = load_data()
+
+
 # =========================================================
-# FOURIER FEATURES
+# Fourier Features
 # =========================================================
 
 def create_fourier_features(
@@ -295,46 +227,40 @@ def create_fourier_features(
 
 
 # =========================================================
-# LOAD MODEL + DATA
-# =========================================================
-
-try:
-
-    model = load_model()
-
-    df = load_data()
-
-except Exception as e:
-
-    st.error(
-        f"Unable to load model or dataset: {e}"
-    )
-
-    st.stop()
-
-
-# =========================================================
-# INPUT CARD
+# Header
 # =========================================================
 
 st.markdown(
-    """
-    <div class="card">
-    """,
+    '<div class="main-title">🌤️ Weather Forecast</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
     """
-    <div class="input-label">
-        Forecast Horizon (Days)
+    <div class="main-subtitle">
+        Predict future temperature using a SARIMAX
+        time-series forecasting model.
     </div>
     """,
     unsafe_allow_html=True
 )
 
+
+# =========================================================
+# Input Section
+# =========================================================
+
+st.markdown(
+    '<div class="custom-card">',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "### Forecast Horizon (Days)"
+)
+
 forecast_days = st.number_input(
-    "Forecast Horizon",
+    "Forecast Horizon (Days)",
     min_value=1,
     max_value=90,
     value=30,
@@ -342,18 +268,8 @@ forecast_days = st.number_input(
     label_visibility="collapsed"
 )
 
-st.markdown(
-    """
-    <div style="
-        color:#64748b;
-        font-size:16px;
-        margin-top:4px;
-        margin-bottom:20px;
-    ">
-        Enter a value between 1 and 90 days.
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "Enter a value between 1 and 90 days."
 )
 
 generate = st.button(
@@ -361,34 +277,33 @@ generate = st.button(
 )
 
 st.markdown(
-    """
-    </div>
-    """,
+    "</div>",
     unsafe_allow_html=True
 )
 
 
 # =========================================================
-# FORECAST
+# Generate Forecast
 # =========================================================
 
 if generate:
 
     try:
 
+        forecast_days = int(forecast_days)
+
         # -------------------------------------------------
-        # FUTURE DATES
+        # Future Dates
         # -------------------------------------------------
 
         future_index = pd.date_range(
             start=df.index.max() + pd.Timedelta(days=1),
-            periods=int(forecast_days),
+            periods=forecast_days,
             freq="D"
         )
 
-
         # -------------------------------------------------
-        # FOURIER FEATURES
+        # Fourier Features
         # -------------------------------------------------
 
         fourier_future = create_fourier_features(
@@ -397,89 +312,67 @@ if generate:
             K=5
         )
 
-
         # -------------------------------------------------
-        # MODEL FORECAST
+        # Forecast
         # -------------------------------------------------
 
         future_forecast = model.get_forecast(
-            steps=int(forecast_days),
+            steps=forecast_days,
             exog=fourier_future
         )
 
+        future_pred = future_forecast.predicted_mean
 
-        future_pred = (
-            future_forecast.predicted_mean
-        )
+        future_ci = future_forecast.conf_int()
 
-        future_ci = (
-            future_forecast.conf_int()
-        )
+        # =================================================
+        # Results DataFrame
+        # =================================================
 
-
-        # -------------------------------------------------
-        # RESULTS DATAFRAME
-        # -------------------------------------------------
-
-        forecast_df = pd.DataFrame({
+        results = pd.DataFrame({
 
             "Date": future_index,
 
-            "Forecast Temperature":
-                future_pred.values,
+            "Forecast Temperature": future_pred.values,
 
-            "Lower 95% CI":
-                future_ci.iloc[:, 0].values,
+            "Lower 95% CI": future_ci.iloc[:, 0].values,
 
-            "Upper 95% CI":
-                future_ci.iloc[:, 1].values
+            "Upper 95% CI": future_ci.iloc[:, 1].values
 
         })
 
+        # Round values
 
-        # -------------------------------------------------
-        # ROUND VALUES
-        # -------------------------------------------------
+        results["Forecast Temperature"] = (
+            results["Forecast Temperature"]
+            .round(2)
+        )
 
-        forecast_df[
-            "Forecast Temperature"
-        ] = forecast_df[
-            "Forecast Temperature"
-        ].round(2)
+        results["Lower 95% CI"] = (
+            results["Lower 95% CI"]
+            .round(2)
+        )
 
-        forecast_df[
-            "Lower 95% CI"
-        ] = forecast_df[
-            "Lower 95% CI"
-        ].round(2)
-
-        forecast_df[
-            "Upper 95% CI"
-        ] = forecast_df[
-            "Upper 95% CI"
-        ].round(2)
-
+        results["Upper 95% CI"] = (
+            results["Upper 95% CI"]
+            .round(2)
+        )
 
         # =================================================
-        # RESULTS
+        # Table Section
         # =================================================
 
         st.markdown(
-            '<div class="card">',
+            '<div class="custom-card">',
             unsafe_allow_html=True
         )
 
         st.markdown(
-            """
+            f"""
             <div class="section-title">
-                📊 Temperature Forecast
+                📊 {forecast_days}-Day Temperature Forecast
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.markdown(
-            """
             <div class="section-subtitle">
                 Forecast with 95% confidence intervals
             </div>
@@ -487,75 +380,59 @@ if generate:
             unsafe_allow_html=True
         )
 
+        # Format date
 
-        # -------------------------------------------------
-        # TABLE
-        # -------------------------------------------------
+        display_table = results.copy()
 
-        display_df = forecast_df.copy()
-
-        display_df["Date"] = (
-            display_df["Date"]
+        display_table["Date"] = (
+            display_table["Date"]
             .dt.strftime("%Y-%m-%d")
         )
 
-        display_df[
-            "Forecast Temperature"
-        ] = display_df[
-            "Forecast Temperature"
-        ].map(
-            lambda x: f"{x:.2f} °C"
+        display_table["Forecast Temperature"] = (
+            display_table["Forecast Temperature"]
+            .astype(str)
+            + " °C"
         )
 
-        display_df[
-            "Lower 95% CI"
-        ] = display_df[
-            "Lower 95% CI"
-        ].map(
-            lambda x: f"{x:.2f} °C"
+        display_table["Lower 95% CI"] = (
+            display_table["Lower 95% CI"]
+            .astype(str)
+            + " °C"
         )
 
-        display_df[
-            "Upper 95% CI"
-        ] = display_df[
-            "Upper 95% CI"
-        ].map(
-            lambda x: f"{x:.2f} °C"
+        display_table["Upper 95% CI"] = (
+            display_table["Upper 95% CI"]
+            .astype(str)
+            + " °C"
         )
-
 
         st.dataframe(
-            display_df,
+            display_table,
             use_container_width=True,
             hide_index=True
         )
 
         st.markdown(
-            '</div>',
+            "</div>",
             unsafe_allow_html=True
         )
 
-
         # =================================================
-        # CHART
+        # Chart Section
         # =================================================
 
         st.markdown(
-            '<div class="card">',
+            '<div class="custom-card">',
             unsafe_allow_html=True
         )
 
         st.markdown(
             """
             <div class="section-title">
-                Temperature Forecast Trend
+                📈 Temperature Forecast Trend
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.markdown(
-            """
             <div class="section-subtitle">
                 Forecast temperature with 95% confidence interval
             </div>
@@ -563,99 +440,87 @@ if generate:
             unsafe_allow_html=True
         )
 
-
         # -------------------------------------------------
-        # PLOTLY
+        # Plotly Chart
         # -------------------------------------------------
 
-        chart = go.Figure()
-
+        fig = go.Figure()
 
         # Lower CI
-        chart.add_trace(
+
+        fig.add_trace(
             go.Scatter(
-                x=forecast_df["Date"],
-                y=forecast_df["Lower 95% CI"],
+                x=results["Date"],
+                y=results["Lower 95% CI"],
                 mode="lines",
-                name="Lower 95% CI",
                 line=dict(
-                    color="rgba(100,116,139,0.5)",
+                    color="rgba(37, 99, 235, 0.35)",
                     dash="dash",
                     width=1
-                )
+                ),
+                name="Lower 95% CI"
             )
         )
 
+        # Upper CI with fill
 
-        # Upper CI
-        chart.add_trace(
+        fig.add_trace(
             go.Scatter(
-                x=forecast_df["Date"],
-                y=forecast_df["Upper 95% CI"],
+                x=results["Date"],
+                y=results["Upper 95% CI"],
                 mode="lines",
-                name="Upper 95% CI",
                 line=dict(
-                    color="rgba(100,116,139,0.5)",
+                    color="rgba(37, 99, 235, 0.35)",
                     dash="dash",
                     width=1
                 ),
                 fill="tonexty",
-                fillcolor="rgba(37,99,235,0.12)"
+                fillcolor="rgba(37, 99, 235, 0.12)",
+                name="Upper 95% CI"
             )
         )
 
-
         # Forecast
-        chart.add_trace(
+
+        fig.add_trace(
             go.Scatter(
-                x=forecast_df["Date"],
-                y=forecast_df["Forecast Temperature"],
+                x=results["Date"],
+                y=results["Forecast Temperature"],
                 mode="lines+markers",
-                name="Forecast Temperature",
                 line=dict(
                     color="#2563eb",
                     width=3
                 ),
                 marker=dict(
-                    color="#2563eb",
-                    size=7
-                )
+                    size=7,
+                    color="#2563eb"
+                ),
+                name="Forecast Temperature"
             )
         )
 
+        # Chart layout
 
-        # -------------------------------------------------
-        # CHART STYLE
-        # -------------------------------------------------
+        fig.update_layout(
 
-        chart.update_layout(
-
-            height=520,
-
-            template="plotly_white",
-
-            paper_bgcolor="white",
+            height=500,
 
             plot_bgcolor="white",
 
-            margin=dict(
-                l=60,
-                r=30,
-                t=20,
-                b=80
-            ),
+            paper_bgcolor="white",
+
+            hovermode="x unified",
 
             xaxis=dict(
                 title="Date",
-                tickangle=-45,
                 showgrid=True,
-                gridcolor="rgba(148,163,184,0.25)"
+                gridcolor="#e2e8f0"
             ),
 
             yaxis=dict(
                 title="Temperature (°C)",
                 showgrid=True,
-                gridcolor="rgba(148,163,184,0.25)"
+                gridcolor="#e2e8f0"
             ),
 
             legend=dict(
@@ -666,24 +531,26 @@ if generate:
                 x=0.5
             ),
 
-            hovermode="x unified"
+            margin=dict(
+                l=50,
+                r=30,
+                t=50,
+                b=50
+            )
         )
 
-
         st.plotly_chart(
-            chart,
+            fig,
             use_container_width=True
         )
 
-
         st.markdown(
-            '</div>',
+            "</div>",
             unsafe_allow_html=True
         )
-
 
     except Exception as e:
 
         st.error(
-            f"Error while generating forecast: {e}"
+            f"Unable to generate forecast: {str(e)}"
         )
