@@ -244,23 +244,21 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
 # =========================================================
-# Input Section
+# INPUT
 # =========================================================
 
 st.markdown(
-    '<div class="custom-card">',
+    """
+    <div class="input-label">
+        Forecast Horizon (Days)
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
-st.markdown(
-    "### Forecast Horizon (Days)"
-)
-
 forecast_days = st.number_input(
-    "Forecast Horizon (Days)",
+    "Forecast Horizon",
     min_value=1,
     max_value=90,
     value=30,
@@ -268,19 +266,21 @@ forecast_days = st.number_input(
     label_visibility="collapsed"
 )
 
-st.caption(
-    "Enter a value between 1 and 90 days."
-)
-
-generate = st.button(
-    "Generate Forecast"
-)
-
 st.markdown(
-    "</div>",
+    """
+    <div style="
+        color:#64748b;
+        font-size:16px;
+        margin-top:4px;
+        margin-bottom:20px;
+    ">
+        Enter a value between 1 and 90 days.
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
+generate = st.button("Generate Forecast")
 
 # =========================================================
 # Generate Forecast
