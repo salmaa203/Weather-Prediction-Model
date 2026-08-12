@@ -38,29 +38,8 @@ application.
 -   Generate forecasts with 95% confidence intervals.
 -   Evaluate models using MAE, RMSE, and MAPE.
 -   Use time-aware validation.
--   Compare SARIMA with XGBoost.
 -   Deploy the forecasting application with Streamlit.
-
-> RNN/LSTM is an optional bonus extension in the original Task 5
-> specification.
-
-## Project Structure
-
-``` text
-weather-prediction-model/
-│
-├── weather_project/
-│   └── streamlit_app.py
-│
-├── predictor/
-│   └── final_weather_model.pkl
-│
-├── weather_cleaned.csv
-├── notebooks/
-├── requirements.txt
-└── README.md
-```
-
+  
 ## Dataset
 
 The cleaned dataset contains a date/time index and weather variables
